@@ -1,0 +1,13 @@
+/* Login form */
+.uk-inline {
+    display: inline !important;
+}
+
+.logo {
+    width: 100%;
+    text-align: center;
+}
+
+.logo img {
+    width: 50%;
+}

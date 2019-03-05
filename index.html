@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/css/uikit.min.css" />
+    <link rel="stylesheet" href="bootstrap-grid.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+</head>
+
+<body>
+    <nav class="uk-navbar-container" uk-navbar>
+        <div class="uk-navbar-left">
+            <ul class="uk-navbar-nav">
+                <li class="uk-active"><a href="#">Inicio</a></li>
+                <li>
+                    <a href="#">Perfil</a>
+                    <div class="uk-navbar-dropdown">
+                        <ul class="uk-nav uk-navbar-dropdown-nav">
+                            <li class="uk-active"><a href="#">Active</a></li>
+                            <li><a href="#">Item</a></li>
+                            <li><a href="#">Item</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li><a href="#">Item</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container mb-5">
+        <div class="col-12 mt-3 uk-card uk-card-default uk-card-body uk-width-1-2@m">
+            <div class="row">
+                <div class="col-12 col-md-8">
+                    <h3 class="uk-card-title">Datos del cliente</h3>
+                    <ul class="uk-list">
+                        <li id="name" class="uk-text-emphasis"></li>
+                        <li id="email" class=""></li>
+                        <li id="loyalty" class="">Nivel de lealtad: <span></span></li>
+                        <li id="points" class="">Puntos actuales: <span></span></li>
+                    </ul>
+                </div>
+                <div class="col-12 col-md-4">
+                    <button uk-toggle="target: #account-status" type="button" class="uk-button uk-button-primary">
+                        Obtener estado de cuenta
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mt-3 uk-card uk-card-default uk-card-body uk-width-1-2@m">
+            <h3 class="uk-card-title">Tickets</h3>
+            <div class="uk-overflow-auto">
+                <table class="uk-table">
+                    <thead>
+                        <tr>
+                            <th>Folio</th>
+                            <th>Fecha</th>
+                            <th>Sucursal</th>
+                            <th>Sucursal Actual</th>
+                            <th>Sucursal Entrega</th>
+                            <th>Fecha de Entrega</th>
+                            <th>Monto</th>
+                            <th>Prendas</th>
+                            <th>Estatus Proceso</th>
+                            <th>Estatus Pago</th>
+                            <th>Estatus Entrega</th>
+                            <th>Estatus Factura</th>
+                            <th>ID Ticket</th>
+                            <th>Factura PDF</th>
+                            <th>Factura</th>
+                        </tr>
+                    </thead>
+                    <!-- <tfoot>
+                        <tr>
+                            <td>Folio</td>
+                            <td>ID</td>
+                            <td>Fecha</td>
+                            <td>Sucursal</td>
+                            <td>Sucursal Actual</td>
+                            <td>Sucursal Entrega</td>
+                            <td>Fecha de Entrega</td>
+                            <td>Monto</td>
+                            <td>Prendas</td>
+                            <td>Estatus</td>
+                            <td>Estatus Pago</td>
+                            <td>Estatus Entrega</td>
+                            <td>Estatus Factura</td>
+                            <td>PDF</td>
+                            <td>Factura</td>
+                        </tr>
+                    </tfoot> -->
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- This is the modal -->
+    <div id="account-status" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+            <h2 class="uk-modal-title">Estado de Cuenta</h2>
+            <ul class="uk-list">
+                <li id="name" class="uk-text-emphasis"></li>
+                <li id="email" class=""></li>
+                <li id="loyalty" class="">Nivel de lealtad: <span></span></li>
+                <li id="points" class=""></li>
+            </ul>
+        </div>
+    </div>
+
+
+
+    <!-- UIkit JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/js/uikit.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/js/uikit-icons.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="soap.js"></script>
+    <script src="tickets.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
