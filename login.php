@@ -55,9 +55,9 @@ $xml = '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xml
             <llave>'.$llave.'</llave>
             <id_usuario>'.$uid.'</id_usuario>
             <modalidad>3</modalidad>
-            <desde_año>2019</desde_año>
+            <desde_ano>2019</desde_ano>
             <desde_mes>01</desde_mes>
-            <hasta_año>2020</hasta_año>
+            <hasta_ano>2020</hasta_ano>
             <hasta_mes>01</hasta_mes>
         </WsTicketsCliente>
     </soap:Body>
@@ -132,7 +132,7 @@ $result = DatosCliente($uid);
 echo $result; break;
 case "TicketPDF":
 $idTicket = $data['idTicket'];
-$result = TicketPDF('A8BF0CE8-056',$idTicket);
+$result = TicketPDF($uid,$idTicket);
 echo $result; break;
 case "Factura":
 $idTicket = $data['idTicket'];

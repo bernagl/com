@@ -1,14 +1,25 @@
 var url = 'http://64.251.10.6/Tintowin_WS/Tintowin_WS.asmx'
-$.ajax({
-  type: 'POST',
-  url: './login.php',
-  data: {
-    exec: 'DatosCliente',
+
+function request(data, success, error) {
+  $.ajax({
+    type: 'POST',
+    url: './login.php',
+    data: data,
+    success: success,
+    error: error
+  })
+}
+
+;(function getUser() {
+  const data = {
+    exec: 'login',
     data: { user: 'Mobkii', password: 'MobkiiTinto!', meses: 10 }
-  },
-  success: OnSuccessDatosCliente,
-  error: OnErrorCall
-})
+  }
+
+  request(data, OnSuccessCallLogin, function(e) {
+    console.log(e)
+  })
+})()
 
 function OnSuccessWsEstadoCtaCliente(response) {
   $(response)
@@ -34,77 +45,82 @@ function OnSuccessDatosCliente(response) {
       $('#name').html(`${name} ${lastName}`)
       $('#loyalty span').html(loyalty)
       $('#points span').html(points)
+    })
+}
 
-      var ticketsBuffer = ''
-      tickets.forEach(function(ticket) {
-        ticketsBuffer += `<tr>
-        <td>${ticket[0]}</td>
-        <th>${ticket[1]}</th>
-        <th>${ticket[2]}</th>
-        <th>${ticket[3]}</th>
-        <th>${ticket[4]}</th>
-        <th>${ticket[5]}</th>
-        <th>${format_currency(ticket[6])}MXN</th>
-        <th>${ticket[7]}</th>
-        <th>${ticket[8]}</th>
-        <th>${ticket[9]}</th>
-        <th>${ticket[10]}</th>
-        <th>${ticket[11]}</th>
-        <th>${ticket[12]}</th>
-        <th class="generateFacturaPDF" data-id="${ticket[0]}">Factura PDF</th>
-        <th class="generateFactura" data-id="${ticket[0]}">Factura</th>
-    </tr>`
-      })
-
-      $('table tbody').html(ticketsBuffer)
-      $(document).ready(function() {
-        $('table').DataTable({
-          language: {
-            url: 'https://cdn.datatables.net/plug-ins/1.10.19/i18n/Spanish.json'
-          }
-        })
-      })
+function tickets(response) {
+  console.log(response)
+  $(response)
+    .find('WsTicketsClienteResult')
+    .each(function() {
+      const a = JSON.parse($(this)[0].innerHTML)
+      console.log(a)
     })
 }
 
 $(document).on('click', '.generateFacturaPDF', function(e) {
   console.log('...')
   var id = $(this).attr('data-id')
-  $.ajax({
-    type: 'POST',
-    url: './login.php',
-    data: {
-      exec: 'TicketPDF',
-      data: { idTicket: id }
-    },
-    success: function(r) {
-      console.log(r)
-    },
-    error: function(e) {
-      console.log(e)
-    }
-  })
-})(function() {
-  $.ajax({
-    type: 'POST',
-    url: './login.php',
-    data: {
-      exec: 'WsEsctadoCtaCliente',
-      data: { user: 'Mobkii', password: 'MobkiiTinto!', meses: 10 }
-    },
-    success: function(response) {
+  const data = {
+    exec: 'TicketPDF',
+    data: { idTicket: id }
+  }
+
+  request(
+    data,
+    function(response) {
       $(response)
-        .find('WsEstadoCtaClienteResult')
+        .find('WsTicketPDFResult')
         .each(function() {
-          const a = JSON.parse($(this)[0].innerHTML)
-          console.log(a)
+          const { DATOS } = JSON.parse($(this)[0].innerHTML)
+          window.open(DATOS[0], '_blank')
         })
     },
-    error: function(e) {
-      console.log(e)
+    function(response) {
+      console.log(r)
     }
-  })
-})()
+  )
+})
+
+function getUserTickets() {
+  const data = { exec: 'WsTicketsCliente' }
+  request(
+    data,
+    function(response) {
+      $(response)
+        .find('WsTicketsClienteResult')
+        .each(function() {
+          const a = JSON.parse($(this)[0].innerHTML)
+          renderTickets(a)
+        })
+    },
+    function(error) {
+      console.log(error)
+    }
+  )
+}
+
+// (function() {
+//   $.ajax({
+//     type: 'POST',
+//     url: './login.php',
+//     data: {
+//       exec: 'WsEsctadoCtaCliente',
+//       data: { user: 'Mobkii', password: 'MobkiiTinto!', meses: 10 }
+//     },
+//     success: function(response) {
+//       $(response)
+//         .find('WsEstadoCtaClienteResult')
+//         .each(function() {
+//           const a = JSON.parse($(this)[0].innerHTML)
+//           console.log(a)
+//         })
+//     },
+//     error: function(e) {
+//       console.log(e)
+//     }
+//   })
+// })()
 
 $(document).on('click', '.generateFactura', function(e) {
   console.log('...')
@@ -140,16 +156,17 @@ function OnSuccessCallLogin(response) {
     .find('WSLoginUsuarioResult')
     .each(function() {
       const a = JSON.parse($(this)[0].innerHTML)
-      $.ajax({
-        type: 'POST',
-        url: './login.php',
-        data: {
-          exec: 'setLogin',
-          data: { uid: a.DATOS[0][0] }
+      const data = {
+        exec: 'setLogin',
+        data: { uid: a.DATOS[0][0] }
+      }
+      request(
+        data,
+        function(response) {
+          getUserTickets()
         },
-        success: e => console.log(e),
-        error: e => console.log(2)
-      })
+        e => consol.log(e)
+      )
     })
 }
 
@@ -164,4 +181,36 @@ function format_currency(v) {
         parseInt(v || 0).toLocaleString() +
         '.' +
         (v * 1).toFixed(2).slice(-2)
+}
+
+function renderTickets({ DATOS: tickets }) {
+  var ticketsBuffer = ''
+  tickets.forEach(function(ticket) {
+    ticketsBuffer += `<tr>
+    <td>${ticket[0]}</td>
+    <th>${ticket[1]}</th>
+    <th>${ticket[2]}</th>
+    <th>${ticket[3]}</th>
+    <th>${ticket[4]}</th>
+    <th>${ticket[5]}</th>
+    <th>${format_currency(ticket[6])}MXN</th>
+    <th>${ticket[7]}</th>
+    <th>${ticket[8]}</th>
+    <th>${ticket[9]}</th>
+    <th>${ticket[10]}</th>
+    <th>${ticket[11]}</th>
+    <th>${ticket[12]}</th>
+    <th class="generateFacturaPDF" data-id="${ticket[12]}">Factura PDF</th>
+    <th class="generateFactura" data-id="${ticket[12]}">Factura</th>
+</tr>`
+  })
+
+  $('table tbody').html(ticketsBuffer)
+  $(document).ready(function() {
+    $('table').DataTable({
+      language: {
+        url: 'https://cdn.datatables.net/plug-ins/1.10.19/i18n/Spanish.json'
+      }
+    })
+  })
 }
