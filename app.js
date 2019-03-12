@@ -30,36 +30,33 @@ function OnSuccessWsEstadoCtaCliente(response) {
     })
 }
 
-function OnSuccessDatosCliente(response) {
-  $(response)
-    .find('WsDatosClienteResult')
-    .each(function() {
-      const a = JSON.parse($(this)[0].innerHTML)
-      console.log(a)
-      const lastName = a.DATOS[0][0]
-      const name = a.DATOS[0][1]
-      const loyalty = a.DATOS[0][2]
-      const points = a.DATOS[0][3]
-
-      console.log(name, lastName, loyalty)
-      $('#name').html(`${name} ${lastName}`)
-      $('#loyalty span').html(loyalty)
-      $('#points span').html(points)
-    })
+function getDatosCliente() {
+  const data = { exec: 'DatosCliente' }
+  request(data, function(response) {
+    $(response)
+      .find('WsDatosClienteResult')
+      .each(function() {
+        const a = JSON.parse($(this)[0].innerHTML)
+        const lastName = a.DATOS[0][0]
+        const name = a.DATOS[0][1]
+        const loyalty = a.DATOS[0][2]
+        const points = a.DATOS[0][3]
+        $('#name').html(`${name} ${lastName}`)
+        $('#loyalty span').html(loyalty)
+        $('#points span').html(points)
+      })
+  })
 }
 
 function tickets(response) {
-  console.log(response)
   $(response)
     .find('WsTicketsClienteResult')
     .each(function() {
       const a = JSON.parse($(this)[0].innerHTML)
-      console.log(a)
     })
 }
 
 $(document).on('click', '.generateFacturaPDF', function(e) {
-  console.log('...')
   var id = $(this).attr('data-id')
   const data = {
     exec: 'TicketPDF',
@@ -76,9 +73,7 @@ $(document).on('click', '.generateFacturaPDF', function(e) {
           window.open(DATOS[0], '_blank')
         })
     },
-    function(response) {
-      console.log(r)
-    }
+    function(response) {}
   )
 })
 
@@ -94,51 +89,33 @@ function getUserTickets() {
           renderTickets(a)
         })
     },
-    function(error) {
-      console.log(error)
-    }
+    function(error) {}
   )
 }
 
-// (function() {
-//   $.ajax({
-//     type: 'POST',
-//     url: './login.php',
-//     data: {
-//       exec: 'WsEsctadoCtaCliente',
-//       data: { user: 'Mobkii', password: 'MobkiiTinto!', meses: 10 }
-//     },
-//     success: function(response) {
-//       $(response)
-//         .find('WsEstadoCtaClienteResult')
-//         .each(function() {
-//           const a = JSON.parse($(this)[0].innerHTML)
-//           console.log(a)
-//         })
-//     },
-//     error: function(e) {
-//       console.log(e)
-//     }
-//   })
-// })()
-
 $(document).on('click', '.generateFactura', function(e) {
-  console.log('...')
   var id = $(this).attr('data-id')
-  $.ajax({
-    type: 'POST',
-    url: './login.php',
-    data: {
-      exec: 'Factura',
-      data: { idTicket: id }
+  const data = {
+    exec: 'Factura',
+    data: { idTicket: id }
+  }
+
+  request(
+    data,
+    function(response) {
+      $(response)
+        .find('WsFacturaResult')
+        .each(function() {
+          const { RESULTADO, DATOS } = JSON.parse($(this)[0].innerHTML)
+          if (RESULTADO[0][0] !== 0) {
+            alert(RESULTADO[0][1])
+          } else {
+            console.log(DATOS[0][0])
+          }
+        })
     },
-    success: function(r) {
-      console.log(r)
-    },
-    error: function(e) {
-      console.log(e)
-    }
-  })
+    function(e) {}
+  )
 })
 
 function OnSuccessWsTicketsCliente(response) {
@@ -164,6 +141,7 @@ function OnSuccessCallLogin(response) {
         data,
         function(response) {
           getUserTickets()
+          getDatosCliente()
         },
         e => consol.log(e)
       )
@@ -200,8 +178,12 @@ function renderTickets({ DATOS: tickets }) {
     <th>${ticket[10]}</th>
     <th>${ticket[11]}</th>
     <th>${ticket[12]}</th>
-    <th class="generateFacturaPDF" data-id="${ticket[12]}">Factura PDF</th>
-    <th class="generateFactura" data-id="${ticket[12]}">Factura</th>
+    <th class="cursor-pointer generateFacturaPDF" data-id="${
+      ticket[12]
+    }">Factura PDF</th>
+    <th class="cursor-pointer generateFactura" data-id="${
+      ticket[12]
+    }">Factura</th>
 </tr>`
   })
 

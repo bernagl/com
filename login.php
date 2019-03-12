@@ -136,7 +136,7 @@ $result = TicketPDF($uid,$idTicket);
 echo $result; break;
 case "Factura":
 $idTicket = $data['idTicket'];
-$result = Factura('A8BF0CE8-056',$idTicket);
+$result = Factura($uid,$idTicket);
 echo $result; break;
 case "xmlEstadoCliente": break;
 }
